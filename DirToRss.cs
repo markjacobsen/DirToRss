@@ -46,13 +46,19 @@ public class DirToRss
                 foreach (string filePath in htmlFiles)
                 {
                     string fileName = Path.GetFileName(filePath);
-                    string title = Path.GetFileNameWithoutExtension(filePath);
+                    string title = Path.GetFileNameWithoutExtension(filePath).Replace('_', ' ');
                     string itemUrl = urlBase + fileName; // Concatenate base URL with filename
+
+                     // Get the creation time of the file and format it to RFC-822
+                    DateTime creationTime = File.GetCreationTimeUtc(filePath);
+                    string pubDate = creationTime.ToString("R"); // "R" for RFC-822 format
+
 
                     writer.WriteStartElement("item");
                     writer.WriteElementString("title", title);
                     writer.WriteElementString("link", itemUrl);
                     writer.WriteElementString("guid", itemUrl); // GUID is often the same as the link
+                    writer.WriteElementString("pubDate", pubDate);
                     writer.WriteEndElement(); // item
 
                     count++;
